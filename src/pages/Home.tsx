@@ -25,7 +25,7 @@ const Home = () => {
           </div>
           
           <h1 className="text-6xl md:text-7xl font-bold mb-6 text-gradient animate-fade-in">
-            Loan Risk Portal
+            Loan Risk Predictor
           </h1>
           
           <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto">
@@ -133,7 +133,7 @@ const Home = () => {
         <div className="container mx-auto">
           <div className="grid md:grid-cols-3 gap-8 text-center md:text-left">
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-gradient">Loan Risk Portal</h3>
+              <h3 className="text-lg font-semibold mb-4 text-gradient">Loan Risk Predictor</h3>
               <p className="text-muted-foreground text-sm">
                 Empowering financial decisions with AI
               </p>
@@ -159,7 +159,7 @@ const Home = () => {
           </div>
           
           <div className="mt-12 pt-8 border-t border-border/30 text-center text-sm text-muted-foreground">
-            <p>© 2024 Loan Risk Portal. All rights reserved.</p>
+            <p>© 2024 Loan Risk Predictor. All rights reserved.</p>
           </div>
         </div>
       </footer>
