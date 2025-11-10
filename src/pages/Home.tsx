@@ -41,7 +41,7 @@ const Home = () => {
       </section>
 
       {/* About Section */}
-      <section className="py-24 px-6">
+      <section className="py-32 px-6 mt-12">
         <div className="container mx-auto">
           <h2 className="text-4xl font-bold text-center mb-16 text-gradient">
             Why Choose Our Platform?
