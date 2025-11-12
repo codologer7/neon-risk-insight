@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, TrendingUp, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PredictionResult {
   probability: number;
@@ -71,14 +72,8 @@ const Predict = () => {
     setLoading(true);
     
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
-      
-      const response = await fetch(`${apiUrl}/score`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('predict-risk', {
+        body: {
           data: {
             annual_income: parseFloat(formData.income),
             credit_amount: parseFloat(formData.creditAmount),
@@ -89,14 +84,16 @@ const Predict = () => {
             contract_type: formData.contractType,
             education: formData.education,
           }
-        }),
+        }
       });
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+      if (error) {
+        throw new Error(error.message || 'Prediction failed');
       }
-
-      const data = await response.json();
+      
+      if (!data) {
+        throw new Error('No data returned from prediction');
+      }
       
       setResult({
         probability: data.probability,
@@ -111,7 +108,7 @@ const Predict = () => {
       console.error("Prediction error:", error);
       toast({
         title: "Prediction Failed",
-        description: error instanceof Error ? error.message : "Failed to connect to the prediction API. Make sure your FastAPI backend is running on http://localhost:8000",
+        description: error instanceof Error ? error.message : "Failed to process prediction request",
         variant: "destructive",
       });
     } finally {
