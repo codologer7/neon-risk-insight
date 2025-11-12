@@ -24,7 +24,7 @@ const Predict = () => {
     creditAmount: "",
     annuity: "",
     age: "",
-    employmentDays: "",
+    employmentYears: "",
     gender: "",
     contractType: "",
     education: "",
@@ -70,27 +70,53 @@ const Predict = () => {
 
     setLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      // Mock prediction result
-      const mockProbability = Math.random() * 0.4 + 0.1; // 10-50%
-      let bucket = "A";
-      if (mockProbability > 0.15) bucket = "B";
-      if (mockProbability > 0.25) bucket = "C";
-      if (mockProbability > 0.35) bucket = "D";
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      
+      const response = await fetch(`${apiUrl}/score`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          data: {
+            annual_income: parseFloat(formData.income),
+            credit_amount: parseFloat(formData.creditAmount),
+            annuity: parseFloat(formData.annuity),
+            age: parseInt(formData.age),
+            employment_years: parseInt(formData.employmentYears),
+            gender: formData.gender,
+            contract_type: formData.contractType,
+            education: formData.education,
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
       
       setResult({
-        probability: mockProbability,
-        riskBucket: bucket,
+        probability: data.probability,
+        riskBucket: data.bucket,
       });
-      
-      setLoading(false);
       
       toast({
         title: "Prediction Complete",
         description: "Risk analysis has been calculated successfully.",
       });
-    }, 2000);
+    } catch (error) {
+      console.error("Prediction error:", error);
+      toast({
+        title: "Prediction Failed",
+        description: error instanceof Error ? error.message : "Failed to connect to the prediction API. Make sure your FastAPI backend is running on http://localhost:8000",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -164,13 +190,13 @@ const Predict = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="employmentDays">Employment Days</Label>
+                  <Label htmlFor="employmentYears">Employment Years</Label>
                   <Input
-                    id="employmentDays"
+                    id="employmentYears"
                     type="number"
-                    placeholder="1825"
-                    value={formData.employmentDays}
-                    onChange={(e) => handleInputChange("employmentDays", e.target.value)}
+                    placeholder="5"
+                    value={formData.employmentYears}
+                    onChange={(e) => handleInputChange("employmentYears", e.target.value)}
                   />
                 </div>
 
@@ -182,8 +208,8 @@ const Predict = () => {
                         <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="M">Male</SelectItem>
+                        <SelectItem value="F">Female</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -195,8 +221,8 @@ const Predict = () => {
                         <SelectValue placeholder="Select type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="cash">Cash Loan</SelectItem>
-                        <SelectItem value="revolving">Revolving Loan</SelectItem>
+                        <SelectItem value="Cash loans">Cash Loan</SelectItem>
+                        <SelectItem value="Revolving loans">Revolving Loan</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -209,10 +235,11 @@ const Predict = () => {
                       <SelectValue placeholder="Select education" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="secondary">Secondary</SelectItem>
-                      <SelectItem value="higher">Higher Education</SelectItem>
-                      <SelectItem value="incomplete">Incomplete Higher</SelectItem>
-                      <SelectItem value="lower">Lower Secondary</SelectItem>
+                      <SelectItem value="Secondary / secondary special">Secondary</SelectItem>
+                      <SelectItem value="Higher education">Higher Education</SelectItem>
+                      <SelectItem value="Incomplete higher">Incomplete Higher</SelectItem>
+                      <SelectItem value="Lower secondary">Lower Secondary</SelectItem>
+                      <SelectItem value="Academic degree">Academic Degree</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -277,19 +304,19 @@ const Predict = () => {
                   <CardContent className="space-y-3 text-sm">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-risk-a/20 flex items-center justify-center text-risk-a font-bold">A</div>
-                      <span className="text-muted-foreground">Low Risk (0-15%)</span>
+                      <span className="text-muted-foreground">Low Risk (0-6%)</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-risk-b/20 flex items-center justify-center text-risk-b font-bold">B</div>
-                      <span className="text-muted-foreground">Moderate Risk (15-25%)</span>
+                      <span className="text-muted-foreground">Moderate Risk (6-12%)</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-risk-c/20 flex items-center justify-center text-risk-c font-bold">C</div>
-                      <span className="text-muted-foreground">High Risk (25-35%)</span>
+                      <span className="text-muted-foreground">High Risk (12-20%)</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-risk-d/20 flex items-center justify-center text-risk-d font-bold">D</div>
-                      <span className="text-muted-foreground">Very High Risk (35%+)</span>
+                      <span className="text-muted-foreground">Very High Risk (20%+)</span>
                     </div>
                   </CardContent>
                 </Card>
