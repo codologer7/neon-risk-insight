@@ -2,9 +2,29 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Brain, Shield, Zap, TrendingUp, Users, Target } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Home = () => {
+  const [open, setOpen] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const { toast } = useToast();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      title: "Message Sent!",
+      description: "Thank you for contacting us. We'll get back to you soon.",
+    });
+    setFormData({ name: "", email: "", message: "" });
+    setOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -143,23 +163,83 @@ const Home = () => {
               <h4 className="text-sm font-semibold mb-3">Quick Links</h4>
               <div className="space-y-2 text-sm text-muted-foreground">
                 <div><Link to="/predict" className="hover:text-primary transition-colors">Predict Risk</Link></div>
-                <div><a href="#" className="hover:text-primary transition-colors">Documentation</a></div>
-                <div><a href="#" className="hover:text-primary transition-colors">API Access</a></div>
+                <div>
+                  <a 
+                    href="https://github.com/codologer7/Loan-Default-Prediction-for-Banking/blob/main/README.md" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="hover:text-primary transition-colors"
+                  >
+                    Documentation
+                  </a>
+                </div>
               </div>
             </div>
             
             <div>
               <h4 className="text-sm font-semibold mb-3">Connect</h4>
               <div className="space-y-2 text-sm text-muted-foreground">
-                <div><a href="#" className="hover:text-primary transition-colors">GitHub</a></div>
-                <div><a href="#" className="hover:text-primary transition-colors">Contact Us</a></div>
-                <div><a href="#" className="hover:text-primary transition-colors">Support</a></div>
+                <div>
+                  <a 
+                    href="https://github.com/codologer7/Loan-Default-Prediction-for-Banking" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="hover:text-primary transition-colors"
+                  >
+                    GitHub
+                  </a>
+                </div>
+                <div>
+                  <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogTrigger asChild>
+                      <button className="hover:text-primary transition-colors">Contact Us</button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Contact Us</DialogTitle>
+                      </DialogHeader>
+                      <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="name">Name</Label>
+                          <Input
+                            id="name"
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="email">Email</Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="message">Message</Label>
+                          <Textarea
+                            id="message"
+                            value={formData.message}
+                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                            required
+                            rows={4}
+                          />
+                        </div>
+                        <Button type="submit" className="w-full">Send Message</Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
             </div>
           </div>
           
           <div className="mt-12 pt-8 border-t border-border/30 text-center text-sm text-muted-foreground">
-            <p>© 2024 Loan Risk Predictor. All rights reserved.</p>
+            <p>© 2025 Loan Risk Predictor. All rights reserved.</p>
+            <p className="mt-2">Built By Team 9</p>
           </div>
         </div>
       </footer>
