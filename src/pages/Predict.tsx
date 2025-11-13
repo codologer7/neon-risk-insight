@@ -140,7 +140,7 @@ const Predict = () => {
               <CardContent className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="income">Income ($)</Label>
+                    <Label htmlFor="income">Income (₹)</Label>
                     <Input
                       id="income"
                       type="number"
@@ -151,7 +151,7 @@ const Predict = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="creditAmount">Credit Amount ($)</Label>
+                    <Label htmlFor="creditAmount">Credit Amount (₹)</Label>
                     <Input
                       id="creditAmount"
                       type="number"
@@ -164,7 +164,7 @@ const Predict = () => {
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="annuity">Annuity ($)</Label>
+                    <Label htmlFor="annuity">Annuity (₹)</Label>
                     <Input
                       id="annuity"
                       type="number"
